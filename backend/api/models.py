@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 import re
+import os
+import pytz
+from datetime import datetime
 
 class Note(models.Model):
     title = models.CharField(max_length=100)
@@ -15,7 +18,7 @@ class Note(models.Model):
 
 class BlocklistItem(models.Model):
     entry = models.CharField(max_length=255, unique=True)
-    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True) # Fixed on_delete
+    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     added_on = models.DateTimeField(auto_now_add=True)
     auto_delete = models.BooleanField(default=False)
     delete_date = models.DateField(null=True, blank=True)
@@ -25,11 +28,14 @@ class BlocklistItem(models.Model):
         return self.entry
 
     def save(self, *args, **kwargs):
-        # if not self.added_by:
-        #     raise ValidationError("Created by field cannot be empty")
         if not self.is_valid_entry(self.entry):
             raise ValidationError(f"{self.entry} is not a valid IP address or domain")
         super().save(*args, **kwargs)
+        self.update_master_blocklist()
+
+    def delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)
+        self.update_master_blocklist()
 
     @staticmethod
     def is_valid_entry(entry):
@@ -39,6 +45,25 @@ class BlocklistItem(models.Model):
         )
         return ip_pattern.match(entry) or domain_pattern.match(entry)
 
+    @staticmethod
+    def update_master_blocklist():
+        blocklist_items = BlocklistItem.objects.all()
+        file_path = os.path.join(os.path.dirname(__file__), '../../index/edl/master_blocklist/master_blocklist.txt')
+        cst = pytz.timezone('America/Chicago')
+        try:
+            with open(file_path, 'w') as file:
+                for item in blocklist_items:
+                    added_by = item.added_by.username if item.added_by else "None"
+                    added_on_cst = item.added_on.astimezone(cst).strftime('%Y-%m-%d %H:%M:%S %Z')
+                    delete_date_str = item.delete_date.strftime('%Y-%m-%d') if item.delete_date else "None"
+                    file.write(f'"{item.entry}" "{added_on_cst}" "auto_delete: {item.auto_delete}" '
+                               f'"{delete_date_str}" "{added_by}" "{item.notes}"\n')
+            print(f"master_blocklist.txt successfully updated at {file_path}")
+        except Exception as e:
+            print(f"Error creating master_blocklist.txt: {e}")
+
+
+        
 class IPList(models.Model):
     ip = models.CharField(max_length=255, unique=True)
     added_on = models.DateTimeField(auto_now_add=True)
