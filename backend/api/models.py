@@ -62,9 +62,14 @@ class BlocklistItem(models.Model):
                     # Add to IPList if valid IP
                     if IPList.is_valid_ip(item.entry):
                         IPList.objects.get_or_create(ip=item.entry)
+
+                    # Add to DomainList if valid domain or has an extension
+                    if DomainList.is_valid_domain_or_ip(item.entry):
+                        DomainList.objects.get_or_create(domain=item.entry)
             print(f"master_blocklist.txt successfully created at {file_path}")
         except Exception as e:
             print(f"Error creating master_blocklist.txt: {e}")
+
 
 
 
@@ -122,11 +127,13 @@ class DomainList(models.Model):
 
     @staticmethod
     def is_valid_domain_or_ip(entry):
-        ip_pattern = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(\.\w+)?$')
+        # Match valid domain names
         domain_pattern = re.compile(
-            r'^(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.\w+)?$'
+            r'^(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.(?!-)[A-Za-z0-9-]{1,63}(?<!-)$'
         )
-        return ip_pattern.match(entry) or domain_pattern.match(entry)
+        # Match entries with any extension (e.g., .exe, .pdf)
+        extension_pattern = re.compile(r'^[A-Za-z0-9-]+\.[A-Za-z0-9]+$')
+        return domain_pattern.match(entry) or extension_pattern.match(entry)
 
     @staticmethod
     def update_domain_blocklist():
