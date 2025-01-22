@@ -2,10 +2,13 @@ import React from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
-import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
-import BlocklistManager from "./components/BlocklistManager"
 import ProtectedRoute from "./components/ProtectedRoute"
+import BlocklistSearch from "./components/BlocklistSearch"; // Import BlocklistSearch
+import Home from "./pages/Home"
+
+
+
 
 function Logout() {
 	localStorage.clear()
@@ -20,6 +23,7 @@ function RegisterAndLogout() {
 
 function App() {
 	return (
+		
 
 		<BrowserRouter>
 			<Routes>
@@ -33,12 +37,15 @@ function App() {
 				/>
 
 				<Route path="/login" element={<Login />}/>
-        <Route path="/logout" element={<Logout />}/>
+        		<Route path="/logout" element={<Logout />}/>
 				<Route path="/register" element={<RegisterAndLogout />}/>
-				<Route path="/blocklist" element={<BlocklistManager />} />
+				<Route path="/search" element={<BlocklistSearch />}></Route>
+				<Route path="/blocklist" element={<BlocklistSearch />} /> 
 				<Route path="*" element={<NotFound />}></Route>
 			</Routes>
 		</BrowserRouter>
+
+		
 
 	)
 

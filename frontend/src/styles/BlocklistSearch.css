@@ -1,0 +1,45 @@
+.blocklist-container {
+  padding: 20px;
+}
+
+.blocklist-card {
+  margin-bottom: 15px;
+}
+
+.blocklist-card-header {
+  background-color: #f8f9fa;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.blocklist-toggle-button {
+  text-align: left;
+  width: 80%;
+  font-size: 1.25rem;
+  color: #007bff;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+}
+
+.blocklist-delete-button {
+  margin-left: 10px;
+}
+
+.blocklist-card-body {
+  padding: 1rem;
+}
+
+input[type="text"] {
+  margin-bottom: 10px;
+  padding: 5px;
+  width: calc(100% - 110px);
+  display: inline-block;
+}
+
+button {
+  padding: 5px 10px;
+  margin-left: 10px;
+}

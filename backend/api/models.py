@@ -34,6 +34,10 @@ class BlocklistItem(models.Model):
         self.update_master_blocklist()
 
     def delete(self, *args, **kwargs):
+        # Remove from IPList if it exists
+        IPList.objects.filter(ip=self.entry).delete()
+        # Remove from DomainList if it exists
+        DomainList.objects.filter(domain=self.entry).delete()
         super().delete(*args, **kwargs)
         self.update_master_blocklist()
 
