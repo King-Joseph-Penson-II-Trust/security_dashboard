@@ -38,7 +38,7 @@ const BlocklistSearch = () => {
   const deleteBlocklistItem = async (id) => {
     try {
       await api.delete(`/api/blocklist/${id}/`);
-      setBlocklistItems(blocklistItems.filter(item => item.id !== id));
+      fetchBlocklistItems(); // Refresh the blocklist items
     } catch (error) {
       console.error('Error deleting blocklist item:', error);
     }
@@ -80,6 +80,7 @@ const BlocklistSearch = () => {
           <Collapse in={openIndex === index}>
             <div id={`collapse-text-${index}`}>
               <Card.Body className="blocklist-card-body">
+                <p><strong>Entry Type: {item.entry_type}</strong></p>
                 <p><strong>Added By:</strong> {item.added_by}</p>
                 <p><strong>Added On:</strong> {new Date(item.added_on).toLocaleString()}</p>
                 <p><strong>Auto Delete:</strong> {item.auto_delete ? 'Yes' : 'No'}</p>

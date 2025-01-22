@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics, viewsets, permissions, status
-from .serializers import UserSerializer, NoteSerializer, BlocklistItemSerializer, IPListSerializer, DomainListSerializer
-from .models import Note, BlocklistItem, IPList, DomainList
+from .serializers import UserSerializer, NoteSerializer, BlocklistItemSerializer
+from .models import Note, BlocklistItem
 from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -42,7 +42,7 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
-class BlocklistViewCreateView(generics.ListCreateAPIView):
+class BlocklistListCreateView(generics.ListCreateAPIView):
     queryset = BlocklistItem.objects.all()
     serializer_class = BlocklistItemSerializer
     permission_classes = [AllowAny]
@@ -56,31 +56,22 @@ class BlocklistRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BlocklistItemSerializer
     permission_classes = [AllowAny]
 
-    def perform_destroy(self, instance):
-        # Remove from IPList if it exists
-        IPList.objects.filter(ip=instance.entry).delete()
-        # Remove from DomainList if it exists
-        DomainList.objects.filter(domain=instance.entry).delete()
-        # Call the original destroy method to delete the BlocklistItem
-        super().perform_destroy(instance)
+# class IPListView(generics.ListCreateAPIView):
+#     queryset = IPList.objects.all()
+#     serializer_class = IPListSerializer
+#     permission_classes = [AllowAny]
 
+# class IPListRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = IPList.objects.all()
+#     serializer_class = IPListSerializer
+#     permission_classes = [AllowAny]
 
-class IPListView(generics.ListCreateAPIView):
-    queryset = IPList.objects.all()
-    serializer_class = IPListSerializer
-    permission_classes = [AllowAny]
+# class DomainListView(generics.ListCreateAPIView):
+#     queryset = DomainList.objects.all()
+#     serializer_class = DomainListSerializer
+#     permission_classes = [AllowAny]
 
-class IPListRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = IPList.objects.all()
-    serializer_class = IPListSerializer
-    permission_classes = [AllowAny]
-
-class DomainListView(generics.ListCreateAPIView):
-    queryset = DomainList.objects.all()
-    serializer_class = DomainListSerializer
-    permission_classes = [AllowAny]
-
-class DomainListRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = DomainList.objects.all()
-    serializer_class = DomainListSerializer
-    permission_classes = [AllowAny]
+# class DomainListRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = DomainList.objects.all()
+#     serializer_class = DomainListSerializer
+#     permission_classes = [AllowAny]

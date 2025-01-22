@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Note, BlocklistItem, IPList, DomainList
+from .models import Note, BlocklistItem
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,7 +21,7 @@ class NoteSerializer(serializers.ModelSerializer):
 class BlocklistItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlocklistItem
-        fields = ['id','entry', 'added_by', 'added_on', 'auto_delete', 'delete_date', 'notes']
+        fields = ['id','entry','entry_type', 'added_by', 'added_on', 'auto_delete', 'delete_date', 'notes']
         extra_kwargs = {"added_by": {"read_only": True}}
 
     def validate_entry(self, value):
@@ -37,12 +37,12 @@ class BlocklistItemSerializer(serializers.ModelSerializer):
             validated_data['added_by'] = None
         return super().create(validated_data)
 
-class IPListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = IPList
-        fields = ['ip', 'added_on']
+# class IPListSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = IPList
+#         fields = ['ip', 'added_on']
 
-class DomainListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DomainList
-        fields = ['domain', 'added_on']
+# class DomainListSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = DomainList
+#         fields = ['domain', 'added_on']
