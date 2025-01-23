@@ -1,3 +1,10 @@
-tobacco.com
-playboy.com
-runnit.exe
+gogo.com
+render.com
+example.com
+myapp.dev
+archive.org
+wikipedia.org
+github.io
+test.local
+securebanking.net
+test.locall

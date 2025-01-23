@@ -6,8 +6,8 @@ from .models import Note, BlocklistItem
 from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from rest_framework.views import APIView  # Add this line
-from rest_framework.parsers import JSONParser
+from rest_framework.views import APIView
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 import os
 import ipaddress
 import re
@@ -56,22 +56,31 @@ class BlocklistRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BlocklistItemSerializer
     permission_classes = [AllowAny]
 
-# class IPListView(generics.ListCreateAPIView):
-#     queryset = IPList.objects.all()
-#     serializer_class = IPListSerializer
-#     permission_classes = [AllowAny]
+class BlocklistFileUploadView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [AllowAny]
 
-# class IPListRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = IPList.objects.all()
-#     serializer_class = IPListSerializer
-#     permission_classes = [AllowAny]
+    def post(self, request, *args, **kwargs):
+        file = request.FILES['file']
+        notes = request.data.get('notes', '')
+        delete_date = request.data.get('delete_date', None)
+        existing_entries = []
+        new_entries = []
 
-# class DomainListView(generics.ListCreateAPIView):
-#     queryset = DomainList.objects.all()
-#     serializer_class = DomainListSerializer
-#     permission_classes = [AllowAny]
+        for line in file:
+            entry = line.strip().decode('utf-8')
+            if BlocklistItem.objects.filter(entry=entry).exists():
+                existing_entries.append(entry)
+            else:
+                BlocklistItem.objects.create(
+                    entry=entry,
+                    notes=notes,
+                    delete_date=delete_date,
+                    added_by=request.user if request.user.is_authenticated else None
+                )
+                new_entries.append(entry)
 
-# class DomainListRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = DomainList.objects.all()
-#     serializer_class = DomainListSerializer
-#     permission_classes = [AllowAny]
+        return Response({
+            'existing_entries': existing_entries,
+            'new_entries': new_entries
+        }, status=status.HTTP_200_OK)

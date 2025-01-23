@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 import { Card, Button, Collapse } from "react-bootstrap";
+import BlocklistForm from "./BlocklistForm";
 import "../styles/BlocklistSearch.css";
 
 const BlocklistSearch = () => {
   const [blocklistItems, setBlocklistItems] = useState([]);
   const [openIndex, setOpenIndex] = useState(null);
   const [inputValue, setInputValue] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [existingEntries, setExistingEntries] = useState([]);
+  const [newEntries, setNewEntries] = useState([]);
 
   useEffect(() => {
     fetchBlocklistItems();
@@ -21,13 +25,37 @@ const BlocklistSearch = () => {
     }
   };
 
-  const addToBlocklist = async () => {
-    try {
-      const response = await api.post('/api/blocklist/', { entry: inputValue });
-      setBlocklistItems([...blocklistItems, response.data]);
-      setInputValue(''); // Clear input after adding
-    } catch (error) {
-      console.error('Error adding to blocklist:', error);
+  const handleModalClose = () => setShowModal(false);
+  const handleModalShow = () => setShowModal(true);
+
+  const handleModalSubmit = async ({ entry, file, notes, deleteDate, autoDelete }) => {
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('notes', notes);
+      formData.append('delete_date', deleteDate);
+      formData.append('auto_delete', autoDelete);
+
+      try {
+        const response = await api.post('/api/blocklist/upload/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        setExistingEntries(response.data.existing_entries);
+        setNewEntries(response.data.new_entries);
+        fetchBlocklistItems(); // Refresh the blocklist items
+      } catch (error) {
+        console.error('Error uploading file:', error);
+      }
+    } else {
+      try {
+        const response = await api.post('/api/blocklist/', { entry, notes, delete_date: deleteDate, auto_delete: autoDelete });
+        setBlocklistItems([...blocklistItems, response.data]);
+        fetchBlocklistItems(); // Refresh the blocklist items
+      } catch (error) {
+        console.error('Error adding to blocklist:', error);
+      }
     }
   };
 
@@ -56,7 +84,32 @@ const BlocklistSearch = () => {
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
       />
-      <button onClick={addToBlocklist}>Add to Blocklist</button>
+      <button onClick={handleModalShow}>Add to Blocklist</button>
+      <BlocklistForm
+        show={showModal}
+        handleClose={handleModalClose}
+        handleSubmit={handleModalSubmit}
+      />
+      {existingEntries.length > 0 && (
+        <div>
+          <h4>Existing Entries</h4>
+          <ul>
+            {existingEntries.map((entry, index) => (
+              <li key={index}>{entry}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {newEntries.length > 0 && (
+        <div>
+          <h4>New Entries</h4>
+          <ul>
+            {newEntries.map((entry, index) => (
+              <li key={index}>{entry}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       {filteredBlocklist.map((item, index) => (
         <Card key={item.id} className="blocklist-card">
           <Card.Header className="blocklist-card-header">
