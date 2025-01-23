@@ -31,7 +31,7 @@ function App() {
 					path="/"
 					element={
 						<ProtectedRoute>
-							<Home />
+							<BlocklistSearch />
 						</ProtectedRoute>
 					}
 				/>
@@ -40,7 +40,6 @@ function App() {
         		<Route path="/logout" element={<Logout />}/>
 				<Route path="/register" element={<RegisterAndLogout />}/>
 				<Route path="/search" element={<BlocklistSearch />}></Route>
-				<Route path="/blocklist" element={<BlocklistSearch />} /> 
 				<Route path="*" element={<NotFound />}></Route>
 			</Routes>
 		</BrowserRouter>
