@@ -1,4 +1,4 @@
-#!/home/king/Security_Dashboard/venv/bin/python3
+#!/home/king/Projects/security_dashboard/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
