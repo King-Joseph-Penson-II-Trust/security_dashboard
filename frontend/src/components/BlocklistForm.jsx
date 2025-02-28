@@ -5,8 +5,7 @@ const BlocklistForm = ({ show, handleClose, handleSubmit }) => {
   const [entry, setEntry] = useState('');
   const [file, setFile] = useState(null);
   const [notes, setNotes] = useState('');
-  const [deleteDate, setDeleteDate] = useState('');
-  const [autoDelete, setAutoDelete] = useState(false);
+
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
