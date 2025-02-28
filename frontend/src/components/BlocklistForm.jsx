@@ -24,8 +24,6 @@ const BlocklistForm = ({ show, handleClose, handleSubmit }) => {
     setEntry('');
     setFile(null);
     setNotes('');
-    setDeleteDate('');
-    setAutoDelete(false);
     handleClose();
   };
 
@@ -62,22 +60,6 @@ const BlocklistForm = ({ show, handleClose, handleSubmit }) => {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               required
-            />
-          </Form.Group>
-          <Form.Group controlId="formDeleteDate">
-            <Form.Label>Delete Date</Form.Label>
-            <Form.Control
-              type="date"
-              value={deleteDate}
-              onChange={(e) => setDeleteDate(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group controlId="formAutoDelete">
-            <Form.Check
-              type="checkbox"
-              label="Auto Delete"
-              checked={autoDelete}
-              onChange={(e) => setAutoDelete(e.target.checked)}
             />
           </Form.Group>
           <Button variant="primary" type="submit">

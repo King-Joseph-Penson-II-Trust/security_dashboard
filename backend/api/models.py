@@ -27,8 +27,6 @@ class BlocklistItem(models.Model):
     entry_type = models.CharField(max_length=10, choices=ENTRY_TYPE_CHOICES, default='IP')
     added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     added_on = models.DateTimeField(auto_now_add=True)
-    delete_date = models.DateField(default=now, blank=True)
-    auto_delete = models.BooleanField(default=False)
     notes = models.TextField(null=True, blank=True)
 
     def __str__(self):
@@ -72,12 +70,13 @@ class BlocklistItem(models.Model):
                  open(ip_file_path, 'w') as ip_file, \
                  open(domain_file_path, 'w') as domain_file:
                 
+                # Write "type=string" at the top of the domain blocklist file
+                domain_file.write('type=string\n')
+                
                 for item in blocklist_items:
                     added_by = item.added_by.username if item.added_by else "None"
                     added_on_cst = item.added_on.astimezone(cst).strftime('%Y-%m-%d %H:%M:%S %Z')
-                    delete_date_str = item.delete_date.strftime('%Y-%m-%d') if item.delete_date else "None"
-                    entry_line = f'"{item.entry}" "{added_on_cst}" "auto_delete: {item.auto_delete}" ' \
-                                 f'"{delete_date_str}" "{added_by}" "{item.notes}"\n'
+                    entry_line = f'"{item.entry}" "{added_on_cst}" "{added_by}" "{item.notes}"\n'
                     
                     master_file.write(entry_line)
                     

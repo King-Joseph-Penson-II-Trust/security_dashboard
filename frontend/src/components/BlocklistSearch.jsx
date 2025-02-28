@@ -33,8 +33,7 @@ const BlocklistSearch = () => {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('notes', notes);
-      formData.append('delete_date', deleteDate);
-      formData.append('auto_delete', autoDelete);
+
 
       try {
         const response = await api.post('/api/blocklist/upload/', formData, {
@@ -50,7 +49,7 @@ const BlocklistSearch = () => {
       }
     } else {
       try {
-        const response = await api.post('/api/blocklist/', { entry, notes, delete_date: deleteDate, auto_delete: autoDelete });
+        const response = await api.post('/api/blocklist/', { entry, notes });
         setBlocklistItems([...blocklistItems, response.data]);
         fetchBlocklistItems(); // Refresh the blocklist items
       } catch (error) {
@@ -73,7 +72,7 @@ const BlocklistSearch = () => {
   };
 
   const filteredBlocklist = blocklistItems
-    .filter(item => !item.auto_delete && item.entry.toLowerCase().includes(inputValue.toLowerCase()))
+    .filter(item => item.entry.toLowerCase().includes(inputValue.toLowerCase()))
     .sort((a, b) => new Date(b.added_on) - new Date(a.added_on));
 
   return (
@@ -140,8 +139,6 @@ const BlocklistSearch = () => {
                     <p><strong>Entry Type: {item.entry_type}</strong></p>
                     <p><strong>Added By:</strong> {item.added_by}</p>
                     <p><strong>Added On:</strong> {new Date(item.added_on).toLocaleString()}</p>
-                    <p><strong>Auto Delete:</strong> {item.auto_delete ? 'Yes' : 'No'}</p>
-                    {item.delete_date && <p><strong>Delete Date:</strong> {new Date(item.delete_date).toLocaleDateString()}</p>}
                     {item.notes && <p><strong>Notes:</strong> {item.notes}</p>}
                   </Card.Body>
                 </div>

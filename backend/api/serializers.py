@@ -21,7 +21,7 @@ class NoteSerializer(serializers.ModelSerializer):
 class BlocklistItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlocklistItem
-        fields = ['id','entry','entry_type', 'added_by', 'added_on', 'delete_date', 'auto_delete', 'notes']
+        fields = ['id','entry','entry_type', 'added_by', 'added_on', 'notes']
         extra_kwargs = {"added_by": {"read_only": True}}
 
     def validate_entry(self, value):

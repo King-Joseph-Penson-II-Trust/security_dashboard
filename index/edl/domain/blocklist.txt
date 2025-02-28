@@ -1,2 +1,4 @@
+type=string
 gogo.com
 render.com
+thisadomain.com
