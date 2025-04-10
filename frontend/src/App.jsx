@@ -6,6 +6,8 @@ import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
 import BlocklistSearch from "./components/BlocklistSearch"; // Import BlocklistSearch
 import Home from "./pages/Home"
+import CustomNavbar from "./components/CustomNavbar"
+import "react-bootstrap/dist/react-bootstrap.min.js"
 
 
 
@@ -24,8 +26,9 @@ function RegisterAndLogout() {
 function App() {
 	return (
 		
-
+		
 		<BrowserRouter>
+		<CustomNavbar />
 			<Routes>
 				<Route
 					path="/"
