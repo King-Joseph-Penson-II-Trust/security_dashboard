@@ -78,7 +78,7 @@ const BlocklistSearch = () => {
   return (
     <div className="blocklist-container">
       <Row>
-        <Col md={6}>
+        
           <input
             type="text"
             placeholder="Search or add new item..."
@@ -111,8 +111,10 @@ const BlocklistSearch = () => {
               </ul>
             </div>
           )}
-        </Col>
-        <Col md={6}>
+        
+        </Row>
+        <Row>
+        
           {filteredBlocklist.map((item, index) => (
             <Card key={item.id} className="blocklist-card">
               <Card.Header className="blocklist-card-header">
@@ -145,7 +147,7 @@ const BlocklistSearch = () => {
               </Collapse>
             </Card>
           ))}
-        </Col>
+        
       </Row>
     </div>
   );
